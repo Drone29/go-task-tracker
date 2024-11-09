@@ -7,6 +7,7 @@ import (
 )
 
 type TaskStatus = int
+type TaskID = int
 type TaskTime = time.Time
 
 const (
@@ -16,7 +17,7 @@ const (
 )
 
 type Task struct {
-	ID          int        `json:"id"`
+	ID          TaskID     `json:"id"`
 	Description string     `json:"description"`
 	Status      TaskStatus `json:"status"`
 	CreatedAt   TaskTime   `json:"created-at"`
