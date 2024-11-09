@@ -107,34 +107,50 @@ func MarkDone(args []string) {
 }
 
 func List(args []string) {
-	var status_filter json_task.TaskStatus = json_task.None
-	defer func() {
-		for _, tsk := range task_map {
-			if status_filter != json_task.None && status_filter != tsk.Status {
-				continue
-			}
-			task_str, _ := json_task.Stringify(tsk)
-			fmt.Println(task_str)
+
+	status_filter := json_task.None
+
+	if len(args) > 0 {
+		switch args[0] {
+		case "done":
+			status_filter = json_task.Done
+		case "todo":
+			status_filter = json_task.ToDo
+		case "in-progress":
+			status_filter = json_task.InProgress
 		}
-	}()
-	switch {
-	case len(args) > 0 && args[0] == json_task.Done:
-		status_filter = json_task.Done
-	case len(args) > 0 && args[0] == json_task.ToDo:
-		status_filter = json_task.ToDo
-	case len(args) > 0 && args[0] == json_task.InProgress:
-		status_filter = json_task.InProgress
+	}
+
+	for _, tsk := range task_map {
+		if status_filter != json_task.None && status_filter != tsk.Status {
+			continue
+		}
+		task_str, _ := json_task.Stringify(tsk)
+		fmt.Println(task_str)
 	}
 }
 
-func main() {
-	// read tasks stored in file
+func loadTasks() {
 	tasks, _ := json_task.Read(dump_file)
-	// populate map from array, update last id
 	for _, tsk := range tasks {
 		task_map[tsk.ID] = tsk
-		last_id = max(last_id, tsk.ID)
+		if tsk.ID > last_id {
+			last_id = tsk.ID
+		}
 	}
+}
+
+func saveTasks() {
+	tasks := make([]Task, 0, len(task_map))
+	for _, tsk := range task_map {
+		tasks = append(tasks, tsk)
+	}
+	json_task.Dump(dump_file, tasks)
+}
+
+func main() {
+
+	loadTasks()
 
 	parser.AddCmd("add", AddTask)
 	parser.AddCmd("update", UpdateTask)
@@ -144,10 +160,5 @@ func main() {
 	parser.AddCmd("list", List)
 	parser.Parse()
 
-	tasks = []Task{}
-	for _, tsk := range task_map {
-		tasks = append(tasks, tsk)
-	}
-	// dump the resulting map
-	json_task.Dump(dump_file, tasks)
+	saveTasks()
 }
