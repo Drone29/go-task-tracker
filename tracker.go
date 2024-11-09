@@ -107,10 +107,10 @@ func MarkDone(args []string) {
 }
 
 func List(args []string) {
-	var status_filter json_task.TaskStatus = -1
+	var status_filter json_task.TaskStatus = json_task.None
 	defer func() {
 		for _, tsk := range task_map {
-			if status_filter >= 0 && status_filter != tsk.Status {
+			if status_filter != json_task.None && status_filter != tsk.Status {
 				continue
 			}
 			task_str, _ := json_task.Stringify(tsk)
@@ -118,11 +118,11 @@ func List(args []string) {
 		}
 	}()
 	switch {
-	case len(args) > 0 && args[0] == "done":
+	case len(args) > 0 && args[0] == json_task.Done:
 		status_filter = json_task.Done
-	case len(args) > 0 && args[0] == "todo":
+	case len(args) > 0 && args[0] == json_task.ToDo:
 		status_filter = json_task.ToDo
-	case len(args) > 0 && args[0] == "in-progress":
+	case len(args) > 0 && args[0] == json_task.InProgress:
 		status_filter = json_task.InProgress
 	}
 }

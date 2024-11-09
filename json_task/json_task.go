@@ -6,14 +6,15 @@ import (
 	"time"
 )
 
-type TaskStatus = int
+type TaskStatus = string
 type TaskID = int
 type TaskTime = time.Time
 
 const (
-	ToDo       TaskStatus = iota
-	InProgress            = iota
-	Done                  = iota
+	ToDo       TaskStatus = "todo"
+	InProgress TaskStatus = "in-progress"
+	Done       TaskStatus = "done"
+	None       TaskStatus = ""
 )
 
 type Task struct {
