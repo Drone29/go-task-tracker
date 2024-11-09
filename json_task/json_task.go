@@ -31,17 +31,6 @@ func Stringify(tsk Task) (string, error) {
 	return string(js_bytes), err
 }
 
-func ToBytes(tsk Task) ([]byte, error) {
-	return json.Marshal(tsk)
-}
-
-// Restore from json string
-func Restore(encoded []byte) (Task, error) {
-	var tsk Task
-	err := json.Unmarshal(encoded, &tsk)
-	return tsk, err
-}
-
 // Dump to json file
 func Dump(filename string, tasks []Task) error {
 	f, err := os.Create(filename)
