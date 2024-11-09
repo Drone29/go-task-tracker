@@ -9,6 +9,10 @@ import (
 
 type Task = json_task.Task
 
+const dump_file = "dump.json"
+
+var task_map = map[string]Task{}
+
 func AddTask(args []string) {
 	fmt.Println("Add", args[0])
 }
@@ -22,16 +26,12 @@ func DeleteTask(args []string) {
 }
 
 func main() {
-
-	tsks := []Task{
-		{"qwe", 123},
-		{"rty", 456},
+	// read tasks stored in file
+	tasks, _ := json_task.Read(dump_file)
+	// populate map from array
+	for _, tsk := range tasks {
+		task_map[tsk.Description] = tsk
 	}
-	err := json_task.Dump("test.json", tsks)
-	if err != nil {
-		fmt.Println("Error", err)
-	}
-	fmt.Println(json_task.Read("test.json"))
 
 	parser.AddCmd("add", AddTask)
 	parser.AddCmd("update", UpdateTask)

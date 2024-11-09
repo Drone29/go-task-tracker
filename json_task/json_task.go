@@ -3,15 +3,33 @@ package json_task
 import (
 	"encoding/json"
 	"os"
+	"time"
+)
+
+type TaskStatus = int
+type TaskTime = time.Time
+
+const (
+	ToDo       TaskStatus = iota
+	InProgress            = iota
+	Done                  = iota
 )
 
 type Task struct {
-	Name string `json:"name"`
-	ID   int    `json:"id"`
+	ID          int        `json:"id"`
+	Description string     `json:"description"`
+	Status      TaskStatus `json:"status"`
+	CreatedAt   TaskTime   `json:"created-at"`
+	UpdatedAt   TaskTime   `json:"updated-at"`
 }
 
 // Convert to json string
-func Stringify(tsk Task) ([]byte, error) {
+func Stringify(tsk Task) (string, error) {
+	js_bytes, err := json.Marshal(tsk)
+	return string(js_bytes), err
+}
+
+func ToBytes(tsk Task) ([]byte, error) {
 	return json.Marshal(tsk)
 }
 
@@ -33,6 +51,7 @@ func Dump(filename string, tasks []Task) error {
 	return encoder.Encode(tasks)
 }
 
+// Read tasks array from file
 func Read(filename string) (tasks []Task, err error) {
 	f, err := os.Open(filename)
 	if err != nil {
