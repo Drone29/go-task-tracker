@@ -33,9 +33,16 @@ func find_task(str_id string) (*Task, int) {
 	return &tsk, id
 }
 
-func AddTask(args []string) {
-	if len(args) < 1 {
+func require_args(args []string, min int) bool {
+	if len(args) < min {
 		fmt.Println("Not enough arguments!")
+		return false
+	}
+	return true
+}
+
+func AddTask(args []string) {
+	if !require_args(args, 1) {
 		return
 	}
 	last_id++
@@ -49,8 +56,7 @@ func AddTask(args []string) {
 }
 
 func UpdateTask(args []string) {
-	if len(args) < 2 {
-		fmt.Println("Not enough arguments!")
+	if !require_args(args, 2) {
 		return
 	}
 	tsk, id := find_task(args[0])
@@ -64,8 +70,7 @@ func UpdateTask(args []string) {
 }
 
 func DeleteTask(args []string) {
-	if len(args) < 1 {
-		fmt.Println("Not enough arguments!")
+	if !require_args(args, 1) {
 		return
 	}
 	_, id := find_task(args[0])
@@ -76,34 +81,26 @@ func DeleteTask(args []string) {
 	fmt.Printf("Task deleted successfully (ID: %d)\n", id)
 }
 
-func MarkInProgress(args []string) {
-	if len(args) < 1 {
-		fmt.Println("Not enough arguments!")
+func UpdateTaskStatus(args []string, status json_task.TaskStatus) {
+	if !require_args(args, 1) {
 		return
 	}
 	tsk, id := find_task(args[0])
 	if id < 0 {
 		return
 	}
-	tsk.Status = json_task.InProgress
+	tsk.Status = status
 	tsk.UpdatedAt = time.Now()
 	task_map[id] = *tsk
-	fmt.Printf("Task marked as in progress successfully (ID: %d)\n", id)
+	fmt.Printf("Task marked as %v successfully (ID: %d)\n", status, id)
+}
+
+func MarkInProgress(args []string) {
+	UpdateTaskStatus(args, json_task.InProgress)
 }
 
 func MarkDone(args []string) {
-	if len(args) < 1 {
-		fmt.Println("Not enough arguments!")
-		return
-	}
-	tsk, id := find_task(args[0])
-	if id < 0 {
-		return
-	}
-	tsk.Status = json_task.Done
-	tsk.UpdatedAt = time.Now()
-	task_map[id] = *tsk
-	fmt.Printf("Task marked as done successfully (ID: %d)\n", id)
+	UpdateTaskStatus(args, json_task.Done)
 }
 
 func List(args []string) {
@@ -124,10 +121,9 @@ func List(args []string) {
 	tasks := make([]Task, 0, len(task_map))
 
 	for _, tsk := range task_map {
-		if status_filter != json_task.None && status_filter != tsk.Status {
-			continue
+		if status_filter == json_task.None || status_filter == tsk.Status {
+			tasks = append(tasks, tsk)
 		}
-		tasks = append(tasks, tsk)
 	}
 	task_str, _ := json_task.Stringify(tasks)
 	fmt.Println(task_str)
