@@ -26,7 +26,7 @@ type Task struct {
 
 // Convert to json string
 func Stringify(tsk Task) (string, error) {
-	js_bytes, err := json.Marshal(tsk)
+	js_bytes, err := json.MarshalIndent(tsk, "", "    ")
 	return string(js_bytes), err
 }
 
