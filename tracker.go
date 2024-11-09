@@ -121,13 +121,16 @@ func List(args []string) {
 		}
 	}
 
+	tasks := make([]Task, 0, len(task_map))
+
 	for _, tsk := range task_map {
 		if status_filter != json_task.None && status_filter != tsk.Status {
 			continue
 		}
-		task_str, _ := json_task.Stringify(tsk)
-		fmt.Println(task_str)
+		tasks = append(tasks, tsk)
 	}
+	task_str, _ := json_task.Stringify(tasks)
+	fmt.Println(task_str)
 }
 
 func loadTasks() {
