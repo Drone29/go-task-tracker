@@ -19,12 +19,18 @@ var (
 	last_id  TaskID
 )
 
-func atoi(a string) int {
-	i, err := strconv.Atoi(a)
+func find_task(str_id string) (*Task, int) {
+	id, err := strconv.Atoi(str_id)
 	if err != nil {
-		fmt.Printf("Conversion error: [%v] %v\n", a, err)
+		fmt.Printf("Conversion error: [%v] %v\n", id, err)
+		return nil, -1
 	}
-	return i
+	tsk, ok := task_map[id]
+	if !ok {
+		fmt.Println("No task with id", id)
+		return nil, -1
+	}
+	return &tsk, id
 }
 
 func AddTask(args []string) {
@@ -47,15 +53,13 @@ func UpdateTask(args []string) {
 		fmt.Println("Not enough arguments!")
 		return
 	}
-	id := atoi(args[0])
-	tsk, ok := task_map[id]
-	if !ok {
-		fmt.Println("No task with id", id)
+	tsk, id := find_task(args[0])
+	if id < 0 {
 		return
 	}
 	tsk.Description = args[1]
 	tsk.UpdatedAt = time.Now()
-	task_map[id] = tsk
+	task_map[id] = *tsk
 	fmt.Printf("Task updated successfully (ID: %d)\n", id)
 }
 
@@ -64,10 +68,8 @@ func DeleteTask(args []string) {
 		fmt.Println("Not enough arguments!")
 		return
 	}
-	id := atoi(args[0])
-	_, ok := task_map[id]
-	if !ok {
-		fmt.Println("No task with id", id)
+	_, id := find_task(args[0])
+	if id < 0 {
 		return
 	}
 	delete(task_map, id)
@@ -79,15 +81,13 @@ func MarkInProgress(args []string) {
 		fmt.Println("Not enough arguments!")
 		return
 	}
-	id := atoi(args[0])
-	tsk, ok := task_map[id]
-	if !ok {
-		fmt.Println("No task with id", id)
+	tsk, id := find_task(args[0])
+	if id < 0 {
 		return
 	}
 	tsk.Status = json_task.InProgress
 	tsk.UpdatedAt = time.Now()
-	task_map[id] = tsk
+	task_map[id] = *tsk
 	fmt.Printf("Task marked as in progress successfully (ID: %d)\n", id)
 }
 
@@ -96,15 +96,13 @@ func MarkDone(args []string) {
 		fmt.Println("Not enough arguments!")
 		return
 	}
-	id := atoi(args[0])
-	tsk, ok := task_map[id]
-	if !ok {
-		fmt.Println("No task with id", id)
+	tsk, id := find_task(args[0])
+	if id < 0 {
 		return
 	}
 	tsk.Status = json_task.Done
 	tsk.UpdatedAt = time.Now()
-	task_map[id] = tsk
+	task_map[id] = *tsk
 	fmt.Printf("Task marked as done successfully (ID: %d)\n", id)
 }
 
