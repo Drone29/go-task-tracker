@@ -39,6 +39,7 @@ func WriteToFile(filename string, tasks []Task) error {
 	}
 	defer f.Close()
 	encoder := json.NewEncoder(f)
+	encoder.SetIndent("", "    ")
 	return encoder.Encode(tasks)
 }
 

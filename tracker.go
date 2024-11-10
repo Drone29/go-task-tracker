@@ -133,9 +133,7 @@ func loadTasks() {
 	tasks, _ := json_task.ReadFile(tasks_file)
 	for _, tsk := range tasks {
 		task_map[tsk.ID] = tsk
-		if tsk.ID > last_id {
-			last_id = tsk.ID
-		}
+		last_id = max(last_id, tsk.ID)
 	}
 }
 
