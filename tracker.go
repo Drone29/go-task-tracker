@@ -125,7 +125,10 @@ func List(args []string) {
 			tasks = append(tasks, tsk)
 		}
 	}
-	task_str, _ := json_task.Stringify(tasks)
+	task_str, err := json_task.Stringify(tasks)
+	if err != nil {
+		fmt.Printf("Error stringifying tasks %v\n", err)
+	}
 	fmt.Println(task_str)
 }
 

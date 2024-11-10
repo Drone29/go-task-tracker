@@ -15,7 +15,6 @@ var sample_task = Task{
 }
 
 func TestStringify(t *testing.T) {
-
 	taskstr, err := Stringify([]Task{sample_task})
 	if err != nil {
 		t.Errorf("Error stringifying task [%v] %v", sample_task, err)
