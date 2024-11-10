@@ -12,7 +12,7 @@ import (
 type Task = json_task.Task
 type TaskID = json_task.TaskID
 
-const dump_file = "dump.json"
+const tasks_file = "tasks.json"
 
 var (
 	task_map = map[TaskID]Task{}
@@ -130,7 +130,7 @@ func List(args []string) {
 }
 
 func loadTasks() {
-	tasks, _ := json_task.Read(dump_file)
+	tasks, _ := json_task.ReadFile(tasks_file)
 	for _, tsk := range tasks {
 		task_map[tsk.ID] = tsk
 		if tsk.ID > last_id {
@@ -144,7 +144,7 @@ func saveTasks() {
 	for _, tsk := range task_map {
 		tasks = append(tasks, tsk)
 	}
-	json_task.Dump(dump_file, tasks)
+	json_task.WriteToFile(tasks_file, tasks)
 }
 
 func main() {

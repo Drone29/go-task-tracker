@@ -31,8 +31,8 @@ func Stringify(tasks []Task) (string, error) {
 	return string(js_bytes), err
 }
 
-// Dump to json file
-func Dump(filename string, tasks []Task) error {
+// Writeto json file
+func WriteToFile(filename string, tasks []Task) error {
 	f, err := os.Create(filename)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func Dump(filename string, tasks []Task) error {
 }
 
 // Read tasks array from file
-func Read(filename string) (tasks []Task, err error) {
+func ReadFile(filename string) (tasks []Task, err error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return
